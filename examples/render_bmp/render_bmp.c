@@ -163,10 +163,10 @@ static void pixel_callback(int16_t x, int16_t y, uint8_t count, uint8_t alpha,
     
     while (count--)
     {
-        pos = (uint32_t)s->width * y + x;
+        pos = ((uint32_t)s->width * y + x) * 3;
         value = s->buffer[pos];
-        value -= alpha;
-        if (value < 0) value = 0;
+        value += alpha;
+        if (value > 255) value = 255;
         s->buffer[pos] = value;
         
         x++;
@@ -250,12 +250,12 @@ int main(int argc, const char **argv)
     state.options = &options;
     state.width = options.width;
     state.height = height;
-    state.buffer = malloc(options.width * height);
+    state.buffer = malloc(options.width * height * 3);
     state.y = 2;
     state.font = font;
     
     /* Initialize image to white */
-    memset(state.buffer, 255, options.width * height);
+    memset(state.buffer, 0, options.width * height * 3);
     
     /* Render the text */
     mf_wordwrap(font, options.width - 2 * options.margin,
