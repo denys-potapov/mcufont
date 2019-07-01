@@ -25,7 +25,7 @@ OBJS += encode_rlefont.o optimize_rlefont.o export_rlefont.o
 OBJS += export_bwfont.o
 
 
-all: run_unittests mcufont
+all: mcufont
 
 clean:
 	rm -f unittests unittests.cc mcufont $(OBJS)

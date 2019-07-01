@@ -2,7 +2,7 @@ all:
 	make -C encoder
 	make -C fonts
 	make -C examples
-	make -C tests
+	# make -C tests
 
 clean:
 	make -C encoder clean
