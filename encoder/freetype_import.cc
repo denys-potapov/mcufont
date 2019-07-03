@@ -102,7 +102,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
     fontinfo.baseline_y = topx(face->bbox.yMax) + 4;
     fontinfo.line_height = topx(face->height);
     
-    FT_Int32 loadmode = FT_LOAD_TARGET_NORMAL | FT_LOAD_RENDER;
+    FT_Int32 loadmode = FT_LOAD_TARGET_LCD;
     
     if (bw)
         loadmode = FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_RENDER;
@@ -115,6 +115,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         try
         {
             checkFT(FT_Load_Glyph(face, gindex, loadmode));
+            FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD);
         }
         catch (std::runtime_error &e)
         {
