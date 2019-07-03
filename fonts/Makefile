@@ -31,7 +31,7 @@ DejaVuSans12bw_bwfont.dat: DejaVuSans12bw.dat
 DejaVuSans12.dat: DejaVuSans.ttf
 	$(MCUFONT) import_ttf $< 12
 	$(MCUFONT) filter $@ $(CHARS)
-	$(MCUFONT) rlefont_optimize $@ 50
+	$(MCUFONT) rlefont_optimize $@ 10
 
 DejaVuSans12bw.dat: DejaVuSans.ttf
 	$(MCUFONT) import_ttf $< 12 bw
@@ -46,7 +46,7 @@ DejaVuSerif16.dat: DejaVuSerif.ttf
 DejaVuSerif32.dat: DejaVuSerif.ttf
 	$(MCUFONT) import_ttf $< 32
 	$(MCUFONT) filter $@ $(CHARS)
-	$(MCUFONT) rlefont_optimize $@ 50
+	$(MCUFONT) rlefont_optimize $@ 10
 
 %.dat: %.bdf
 	$(MCUFONT) import_bdf $<
