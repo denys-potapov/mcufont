@@ -96,10 +96,10 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
     
     // Reserve 4 pixels on each side for antialiasing + hinting.
     // They will be cropped off later.
-    fontinfo.max_width = topx(face->bbox.xMax - face->bbox.xMin) + 8;
-    fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) + 8;
-    fontinfo.baseline_x = topx(-face->bbox.xMin) + 4;
-    fontinfo.baseline_y = topx(face->bbox.yMax) + 4;
+    fontinfo.max_width = topx(face->bbox.xMax - face->bbox.xMin) + 24;
+    fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) + 24;
+    fontinfo.baseline_x = topx(-face->bbox.xMin) + 12;
+    fontinfo.baseline_y = topx(face->bbox.yMax) + 12;
     fontinfo.line_height = topx(face->height);
     
     FT_Int32 loadmode = FT_LOAD_TARGET_LCD;
@@ -124,7 +124,8 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         }
         
         DataFile::glyphentry_t glyph;
-        glyph.width = (face->glyph->advance.x + 32) / 64;
+        // Multiply by pixel value
+        glyph.width = (face->glyph->advance.x + 32) * 3 / 64;
         glyph.chars.push_back(charcode);
         glyph.data.resize(fontinfo.max_width * fontinfo.max_height);
         

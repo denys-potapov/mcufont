@@ -24,11 +24,11 @@ typedef struct {
 } options_t;
 
 static const char default_text[] = 
-    "The quick brown fox jumps over the lazy dog. "
-    "The quick brown fox jumps over the lazy dog. "
-    "The quick brown fox jumps over the lazy dog. "
-    "The quick brown fox jumps over the lazy dog.\n"
-    "0123456789 !?()[]{}/\\+-*";
+    "T     he quick brown fox jumps over the lazy dog. "
+    "T     he quick brown fox jumps over the lazy dog. "
+    "T     he quick brown fox jumps over the lazy dog. "
+    "T     he quick brown fox jumps over the lazy dog.\n"
+    "0     123456789 !?()[]{}/\\+-*";
 
 static const char usage_text[] =
     "Usage: ./render_bmp [options] string\n"
@@ -157,13 +157,13 @@ static void pixel_callback(int16_t x, int16_t y, uint8_t count, uint8_t alpha,
     state_t *s = (state_t*)state;
     uint32_t pos;
     int16_t value;
-    
+
     if (y < 0 || y >= s->height) return;
-    if (x < 0 || x + count >= s->width) return;
+    if (x < 0 || x + count >= s->width * 3) return;
     
     while (count--)
     {
-        pos = ((uint32_t)s->width * y + x) * 3;
+        pos = ((uint32_t)s->width * y * 3 + x);
         value = s->buffer[pos];
         value += alpha;
         if (value > 255) value = 255;
@@ -178,7 +178,7 @@ static uint8_t character_callback(int16_t x, int16_t y, mf_char character,
                                   void *state)
 {
     state_t *s = (state_t*)state;
-    return mf_render_character(s->font, x, y, character, pixel_callback, state);
+    return mf_render_character(s->font, x * 2, y, character, pixel_callback, state);
 }
 
 /* Callback to render lines. */
