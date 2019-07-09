@@ -96,13 +96,13 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
     
     // Reserve 4 pixels on each side for antialiasing + hinting.
     // They will be cropped off later.
-    fontinfo.max_width = topx(face->bbox.xMax - face->bbox.xMin) + 8;
-    fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) * 3 + 24;
-    fontinfo.baseline_x = topx(-face->bbox.xMin) + 4;
-    fontinfo.baseline_y = topx(face->bbox.yMax) * 3 + 24;
+    fontinfo.max_width = topx((face->bbox.xMax - face->bbox.xMin) * 3) + 24;
+    fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) + 8;
+    fontinfo.baseline_x = topx(-face->bbox.xMin * 3) + 12;
+    fontinfo.baseline_y = topx(face->bbox.yMax) + 8;
     fontinfo.line_height = topx(face->height);
     
-    FT_Int32 loadmode = FT_LOAD_TARGET_LCD_V;
+    FT_Int32 loadmode = FT_LOAD_TARGET_LCD;
     
     if (bw)
         loadmode = FT_LOAD_TARGET_MONO | FT_LOAD_MONOCHROME | FT_LOAD_RENDER;
@@ -115,7 +115,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         try
         {
             checkFT(FT_Load_Glyph(face, gindex, loadmode));
-            FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD_V); 
+            FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD); 
         }
         catch (std::runtime_error &e)
         {
@@ -124,11 +124,12 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         }
         
         DataFile::glyphentry_t glyph;
-        glyph.width = (face->glyph->advance.x + 32) / 64;
+        glyph.width = ((face->glyph->advance.x + 32) / 64) * 3;
         glyph.chars.push_back(charcode);
         glyph.data.resize(fontinfo.max_width * fontinfo.max_height);
         
-        int w = face->glyph->bitmap.width;
+        /* int w = face->glyph->bitmap.width / 3 * 3; */
+        printf("WIDTh id : %d %d\n", gindex, face->glyph->bitmap.width);
         int dw = fontinfo.max_width;
         int dx = fontinfo.baseline_x + face->glyph->bitmap_left;
         int dy = fontinfo.baseline_y - face->glyph->bitmap_top;
@@ -157,7 +158,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
                 else
                 {
                     glyph.data.at(index) =
-                        (face->glyph->bitmap.buffer[w * y + x] + 8) / 17;
+                        (face->glyph->bitmap.buffer[s * y + x] + 8) / 17;
                 }
             }
         }
