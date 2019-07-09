@@ -163,7 +163,7 @@ static void pixel_callback(int16_t x, int16_t y, uint8_t count, uint8_t alpha,
 
     while (count--)
     {
-        pos = ((uint32_t)s->width * y + x) * 3 + 1;
+        pos = ((uint32_t)s->width * y) * 3 + x;
         value = s->buffer[pos];
         value += alpha;
         if (value > 255) value = 255;

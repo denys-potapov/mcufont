@@ -8,6 +8,7 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_LCD_FILTER_H
 
 #undef __FTERRORS_H__
 #define FT_ERRORDEF( e, v, s )  std::make_pair( e, s ),
@@ -74,6 +75,8 @@ static void readfile(std::istream &file, std::vector<char> &data)
 
 std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
 {
+    FT_Vector EvenLcdGeometry[3] = {{-21, 0}, {0, 0}, {21, 0}};
+
     std::vector<char> data;
     readfile(file, data);
     
@@ -115,6 +118,8 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         try
         {
             checkFT(FT_Load_Glyph(face, gindex, loadmode));
+
+            FT_Library_SetLcdGeometry(lib, EvenLcdGeometry);
             FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD); 
         }
         catch (std::runtime_error &e)
@@ -124,12 +129,14 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         }
         
         DataFile::glyphentry_t glyph;
-        glyph.width = ((face->glyph->advance.x + 32) / 64) * 3;
+        glyph.width = ((face->glyph->advance.x * 3 + 32) / 64);
         glyph.chars.push_back(charcode);
         glyph.data.resize(fontinfo.max_width * fontinfo.max_height);
         
-        /* int w = face->glyph->bitmap.width / 3 * 3; */
-        printf("WIDTh id : %d %d\n", gindex, face->glyph->bitmap.width);
+        /* 
+        Not sure why, but we do not need this line
+        int w = face->glyph->bitmap.width / 3 * 3; */
+       
         int dw = fontinfo.max_width;
         int dx = fontinfo.baseline_x + face->glyph->bitmap_left;
         int dy = fontinfo.baseline_y - face->glyph->bitmap_top;

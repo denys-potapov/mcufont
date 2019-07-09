@@ -7,7 +7,8 @@ endif
 
 # Libfreetype
 CXXFLAGS += $(shell pkg-config freetype2 --cflags)
-LDFLAGS += $(shell pkg-config freetype2 --libs)
+LDFLAGS += -L/usr/local/lib
+LDFLAGS += $(shell freetype-config --libs)
 
 # Class to represent font data internally
 OBJS = datafile.o
