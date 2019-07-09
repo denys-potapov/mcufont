@@ -157,13 +157,16 @@ static void pixel_callback(int16_t x, int16_t y, uint8_t count, uint8_t alpha,
     state_t *s = (state_t*)state;
     uint32_t pos;
     int16_t value;
+
+    int16_t dy = s->y - y;
+    y = s->y - dy / 3;
     
     if (y < 0 || y >= s->height) return;
     if (x < 0 || x + count >= s->width) return;
-    
+    printf("Y: %d %d\n", s->y, s->height);
     while (count--)
     {
-        pos = ((uint32_t)s->width * y + x) * 3;
+        pos = ((uint32_t)s->width * y + x) * 3 + 1;
         value = s->buffer[pos];
         value += alpha;
         if (value > 255) value = 255;
@@ -254,7 +257,7 @@ int main(int argc, const char **argv)
     state.y = 2;
     state.font = font;
     
-    /* Initialize image to white */
+    /* Initialize image to black */
     memset(state.buffer, 0, options.width * height * 3);
     
     /* Render the text */
