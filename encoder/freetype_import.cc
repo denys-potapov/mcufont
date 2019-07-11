@@ -99,9 +99,9 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
     
     // Reserve 4 pixels on each side for antialiasing + hinting.
     // They will be cropped off later.
-    fontinfo.max_width = topx((face->bbox.xMax - face->bbox.xMin) * 3) + 24;
+    fontinfo.max_width = topx((face->bbox.xMax - face->bbox.xMin)) * 3 + 24;
     fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) + 8;
-    fontinfo.baseline_x = topx(-face->bbox.xMin * 3) + 12;
+    fontinfo.baseline_x = topx(-face->bbox.xMin) * 3 + 12;
     fontinfo.baseline_y = topx(face->bbox.yMax) + 8;
     fontinfo.line_height = topx(face->height);
     
@@ -129,10 +129,11 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         }
         
         DataFile::glyphentry_t glyph;
-        glyph.width = ((face->glyph->advance.x * 3 + 32) / 64);
+        glyph.width = ((face->glyph->advance.x + 32) / 64) * 3;
         glyph.chars.push_back(charcode);
         glyph.data.resize(fontinfo.max_width * fontinfo.max_height);
         
+        printf("char width %d\n", glyph.width);
         /* 
         Not sure why, but we do not need this line
         int w = face->glyph->bitmap.width / 3 * 3; */

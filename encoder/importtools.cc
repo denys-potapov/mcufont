@@ -69,6 +69,14 @@ void crop_glyphs(std::vector<DataFile::glyphentry_t> &glyphtable,
     if (bbox.right < bbox.left)
         return; // There were no glyphs
     
+    // SPR FIX
+    bbox.left = (bbox.left / 3) * 3;
+    bbox.right = (bbox.right / 3 + 1) * 3 - 1;
+
+    printf("Old Width = %d\n", fontinfo.max_width);
+    printf("new right = %d\n", bbox.right);
+    printf("new left = %d\n", bbox.left);
+
     // Crop the glyphs to that
     size_t old_w = fontinfo.max_width;
     size_t new_w = bbox.right - bbox.left + 1;
