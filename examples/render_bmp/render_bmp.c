@@ -24,11 +24,11 @@ typedef struct {
 } options_t;
 
 static const char default_text[] = 
-    "The quick brown fox jumps over the lazy dog. "
-    "The quick brown fox jumps over the lazy dog. "
-    "The quick brown fox jumps over the lazy dog. "
-    "The quick brown fox jumps over the lazy dog.\n"
-    "0123456789 !?()[]{}/\\+-*";
+    "TThe quick brown fox jumps over the lazy dog. "
+    "TThe quick brown fox jumps over the lazy dog. "
+    "TThe quick brown fox jumps over the lazy dog. "
+    "TThe quick brown fox jumps over the lazy dog.\n"
+    "T0123456789 !?()[]{}/\\+-*";
 
 static const char usage_text[] =
     "Usage: ./render_bmp [options] string\n"
@@ -159,7 +159,7 @@ static void pixel_callback(int16_t x, int16_t y, uint8_t count, uint8_t alpha,
     int16_t value;
     
     if (y < 0 || y >= s->height) return;
-    if (x < 0 || x + count >= s->width) return;
+    if (x < 0 || x + count >= s->width * 3) return;
 
     while (count--)
     {
@@ -241,7 +241,7 @@ int main(int argc, const char **argv)
     
     /* Count the number of lines that we need. */
     height = 0;
-    mf_wordwrap(font, options.width - 2 * options.margin,
+    mf_wordwrap(font, (options.width - 2 * options.margin) * 3,
                 options.text, count_lines, &height);
     height *= font->height;
     height += 4;
@@ -258,7 +258,7 @@ int main(int argc, const char **argv)
     memset(state.buffer, 0, options.width * height * 3);
     
     /* Render the text */
-    mf_wordwrap(font, options.width - 2 * options.margin,
+    mf_wordwrap(font, (options.width - 2 * options.margin) * 3,
                 options.text, line_callback, &state);
     
     /* Write out the bitmap */
