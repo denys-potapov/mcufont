@@ -113,7 +113,7 @@ int8_t mf_compute_kerning(const struct mf_font_s *font,
     if (adjust < max_adjust) adjust = max_adjust;
     
     /* SPR fix round cern to 3 */
-    adjust = (adjust) / 3 * 3;
+    adjust = (adjust - 1) / 3 * 3;
     return adjust;
 }
 

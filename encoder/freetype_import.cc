@@ -145,7 +145,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         int dx = fontinfo.baseline_x + face->glyph->bitmap_left;
         int dy = fontinfo.baseline_y - face->glyph->bitmap_top;
         
-        dx = (dx + 2)/ 3 * 3;
+        dx = (dx + 1) / 3 * 3;
 
         /* Some combining diacritics seem to exceed the bounding box.
          * We don't support them all that well anyway, so just move
