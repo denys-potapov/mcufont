@@ -76,9 +76,10 @@ static void readfile(std::istream &file, std::vector<char> &data)
 std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
 {
     /* Should be R, G, B {x, y} 
-    But to interlans look like G B R
+    But to interlans look like B G R
     */
-    FT_Vector EvenLcdGeometry[3] = {{0, 0}, {0, 0}, {0, 0}};
+    FT_Vector EvenLcdGeometry[3] = {{-16, 0}, {16, 16}, {16, -16}};
+    FT_Vector OddLcdGeometry[3] = {{16, 0}, {-16, 16}, {-16, -16}};
 
     std::vector<char> data;
     readfile(file, data);
@@ -145,7 +146,6 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         int dy = fontinfo.baseline_y - face->glyph->bitmap_top;
         
         dx = (dx + 2)/ 3 * 3;
-        printf("Dx: %d\n", dx);
 
         /* Some combining diacritics seem to exceed the bounding box.
          * We don't support them all that well anyway, so just move
@@ -156,7 +156,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
             dy = fontinfo.max_height - face->glyph->bitmap.rows;
         
         size_t s = face->glyph->bitmap.pitch;
-        for (int y = 0; y < face->glyph->bitmap.rows; y++)
+        for (int y = 1; y < face->glyph->bitmap.rows; y+=2)
         {
             for (int x = 0; x < face->glyph->bitmap.width; x++)
             {
@@ -173,6 +173,20 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
                     glyph.data.at(index) =
                         (face->glyph->bitmap.buffer[s * y + x] + 8) / 17;
                 }
+            }
+        }
+
+        FT_Library_SetLcdGeometry(lib, OddLcdGeometry);
+        checkFT(FT_Load_Glyph(face, gindex, loadmode));
+        FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD); 
+        for (int y = 0; y < face->glyph->bitmap.rows; y+=2)
+        {
+            for (int x = 0; x < face->glyph->bitmap.width; x++)
+            {
+                size_t index = (y + dy) * dw + x + dx;
+                
+                glyph.data.at(index) =
+                        (face->glyph->bitmap.buffer[s * y + x] + 8) / 17;
             }
         }
         glyphtable.push_back(glyph);
