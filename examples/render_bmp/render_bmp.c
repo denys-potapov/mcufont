@@ -52,7 +52,7 @@ static bool parse_options(int argc, const char **argv, options_t *options)
     options->filename = "out.bmp";
     options->text = default_text;
     options->width = 200;
-    options->margin = 5;
+    options->margin = 6;
     options->scale = 1;
     
     while (argv != end)

@@ -64,7 +64,7 @@
  * fonts.
  */
 #ifndef MF_KERNING_SPACE_PIXELS
-#define MF_KERNING_SPACE_PIXELS 3
+#define MF_KERNING_SPACE_PIXELS 9
 #endif
 
 /* Maximum adjustment done by the kerning algorithm, as percent of the

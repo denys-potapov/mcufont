@@ -75,7 +75,10 @@ static void readfile(std::istream &file, std::vector<char> &data)
 
 std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
 {
-    FT_Vector EvenLcdGeometry[3] = {{-21, 0}, {0, 0}, {21, 0}};
+    /* Should be R, G, B {x, y} 
+    But to interlans look like G B R
+    */
+    FT_Vector EvenLcdGeometry[3] = {{0, 0}, {0, 0}, {0, 0}};
 
     std::vector<char> data;
     readfile(file, data);
@@ -133,7 +136,6 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         glyph.chars.push_back(charcode);
         glyph.data.resize(fontinfo.max_width * fontinfo.max_height);
         
-        printf("char width %d\n", glyph.width);
         /* 
         Not sure why, but we do not need this line
         int w = face->glyph->bitmap.width / 3 * 3; */
@@ -142,6 +144,9 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         int dx = fontinfo.baseline_x + face->glyph->bitmap_left;
         int dy = fontinfo.baseline_y - face->glyph->bitmap_top;
         
+        dx = (dx + 2)/ 3 * 3;
+        printf("Dx: %d\n", dx);
+
         /* Some combining diacritics seem to exceed the bounding box.
          * We don't support them all that well anyway, so just move
          * them inside the box in order not to crash.. */
