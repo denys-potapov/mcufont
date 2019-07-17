@@ -108,7 +108,7 @@ int8_t mf_compute_kerning(const struct mf_font_s *font,
     normal_space += MF_KERNING_SPACE_PIXELS;
     adjust = normal_space - min_space;
     max_adjust = -max16(w1, w2) * MF_KERNING_LIMIT / 100;
-    
+
     if (adjust > 0) adjust = 0;
     if (adjust < max_adjust) adjust = max_adjust;
     

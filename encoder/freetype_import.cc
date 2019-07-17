@@ -133,7 +133,8 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         }
         
         DataFile::glyphentry_t glyph;
-        glyph.width = ((face->glyph->advance.x + 32) / 64) * 3;
+        /*glyph.width = (face->glyph->advance.x + face->glyph->advance.y) >> 6 * 3;*/
+        glyph.width = ((face->glyph->advance.x + 32) / 64) * 3 + 3;
         glyph.chars.push_back(charcode);
         glyph.data.resize(fontinfo.max_width * fontinfo.max_height);
         
