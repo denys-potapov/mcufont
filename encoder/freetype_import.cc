@@ -179,8 +179,10 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
 
         FT_Library_SetLcdGeometry(lib, OddLcdGeometry);
         checkFT(FT_Load_Glyph(face, gindex, loadmode));
-        FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD); 
-        for (int y = 0; y < face->glyph->bitmap.rows; y+=2)
+        FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD);
+
+        int start_y = fontinfo.baseline_y % 2;
+        for (int y = start_y; y < face->glyph->bitmap.rows; y+=2)
         {
             for (int x = 0; x < face->glyph->bitmap.width; x++)
             {
