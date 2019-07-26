@@ -24,10 +24,10 @@ typedef struct {
 } options_t;
 
 static const char default_text[] = 
-    "TThe quick brown fox jumps over the lazy dog. "
-    "TThe quick brown fox jumps over the lazy dog. "
-    "TThe quick brown fox jumps over the lazy dog. "
-    "TThe quick brown fox jumps over the lazy dog.\n"
+    "The quick brown fox jumps over the lazy dog. "
+    "The quick brown fox jumps over the lazy dog. "
+    "The quick brown fox jumps over the lazy dog. "
+    "The quick brown fox jumps over the lazy dog.\n"
     "T0123456789 !?()[]{}/\\+-*";
 
 static const char usage_text[] =

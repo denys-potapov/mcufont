@@ -14,4 +14,4 @@ cd ../examples/render_bmp
 make -B
 
 # ./render_bmp -a l -f DejaVuSerif16
-./render_bmp -a l -f DejaVuSans12
+./render_bmp -a l -w 120 -f DejaVuSans12
