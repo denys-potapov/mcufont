@@ -2,7 +2,7 @@
 MCUFONT = ../encoder/mcufont
 
 # Names of fonts to process
-FONTS = DejaVuSans12 DejaVuSans14 DejaVuSansMono12
+FONTS = DejaVuSans12 DejaVuSans14 DejaVuSansMono12 PT_mono12
 
 # Characters to include in the fonts
 CHARS = 0-255 0x2010-0x2015
