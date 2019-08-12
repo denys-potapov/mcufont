@@ -200,7 +200,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
     }
     
     eliminate_duplicates(glyphtable);
-    crop_glyphs(glyphtable, fontinfo);
+    /* crop_glyphs(glyphtable, fontinfo); */
     detect_flags(glyphtable, fontinfo);
     
     std::unique_ptr<DataFile> result(new DataFile(
