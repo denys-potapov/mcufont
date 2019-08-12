@@ -156,8 +156,10 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         if (dy + face->glyph->bitmap.rows > fontinfo.max_height)
             dy = fontinfo.max_height - face->glyph->bitmap.rows;
         
+        int start_y = fontinfo.baseline_y % 2;
+
         size_t s = face->glyph->bitmap.pitch;
-        for (int y = 1; y < face->glyph->bitmap.rows; y+=2)
+        for (int y = start_y; y < face->glyph->bitmap.rows; y+=2)
         {
             for (int x = 0; x < face->glyph->bitmap.width; x++)
             {
@@ -181,8 +183,8 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         checkFT(FT_Load_Glyph(face, gindex, loadmode));
         FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD);
 
-        int start_y = fontinfo.baseline_y % 2;
-        for (int y = start_y; y < face->glyph->bitmap.rows; y+=2)
+        
+        for (int y = 1 - start_y; y < face->glyph->bitmap.rows; y+=2)
         {
             for (int x = 0; x < face->glyph->bitmap.width; x++)
             {
