@@ -104,7 +104,8 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
     // Reserve 4 pixels on each side for antialiasing + hinting.
     // They will be cropped off later.
     fontinfo.max_width = topx((face->bbox.xMax - face->bbox.xMin)) * 3 + 24;
-    fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) + 8;
+    // we reserve 8 pixels on both side for SPR
+    fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) + 16;
     fontinfo.baseline_x = topx(-face->bbox.xMin) * 3 + 12;
     fontinfo.baseline_y = topx(face->bbox.yMax) + 8;
     fontinfo.line_height = topx(face->height);
@@ -155,7 +156,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
             dy = 0;
         if (dy + face->glyph->bitmap.rows > fontinfo.max_height)
             dy = fontinfo.max_height - face->glyph->bitmap.rows;
-        
+
         int start_y = fontinfo.baseline_y % 2;
 
         size_t s = face->glyph->bitmap.pitch;
@@ -183,7 +184,16 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         checkFT(FT_Load_Glyph(face, gindex, loadmode));
         FT_Render_Glyph(face->glyph, FT_RENDER_MODE_LCD);
 
-        
+        dy = fontinfo.baseline_y - face->glyph->bitmap_top;      
+
+        /* Some combining diacritics seem to exceed the bounding box.
+         * We don't support them all that well anyway, so just move
+         * them inside the box in order not to crash.. */
+        if (dy < 0)
+            dy = 0;
+        if (dy + face->glyph->bitmap.rows > fontinfo.max_height)
+            dy = fontinfo.max_height - face->glyph->bitmap.rows;
+
         for (int y = 1 - start_y; y < face->glyph->bitmap.rows; y+=2)
         {
             for (int x = 0; x < face->glyph->bitmap.width; x++)
