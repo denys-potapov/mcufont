@@ -106,10 +106,22 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
     fontinfo.max_width = topx((face->bbox.xMax - face->bbox.xMin)) * 3 + 24;
     // we reserve 8 pixels on both side for SPR
     fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) + 16;
-    fontinfo.baseline_x = topx(-face->bbox.xMin) * 3 + 12;
+    // baseline_x is inverted
+    fontinfo.baseline_x = topx(-face->bbox.xMin) * 3 + 12 + 2;
     fontinfo.baseline_y = topx(face->bbox.yMax) + 8;
     fontinfo.line_height = topx(face->height);
     
+    printf("y max = %ld\n", face->bbox.yMax);
+    printf("x max = %ld\n", face->bbox.xMax);
+    printf("y yMin = %ld\n", face->bbox.yMin);
+    printf("xmin = %ld\n", face->bbox.xMin);
+
+    printf("max width = %d\n", fontinfo.max_width);
+    printf("max_height = %d\n", fontinfo.max_height);
+    printf("baseline_x = %d\n", fontinfo.baseline_x);
+    printf("baseline_y = %d\n", fontinfo.baseline_y);
+    printf("line_height = %d\n", fontinfo.line_height);
+
     FT_Int32 loadmode = FT_LOAD_TARGET_LCD;
     
     if (bw)
@@ -135,19 +147,20 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         
         DataFile::glyphentry_t glyph;
         /*glyph.width = (face->glyph->advance.x + face->glyph->advance.y) >> 6 * 3;*/
-        glyph.width = ((face->glyph->advance.x + 32) / 64) * 3 + 3;
+        glyph.width = ((face->glyph->advance.x + 32) / 64) * 3;
         glyph.chars.push_back(charcode);
         glyph.data.resize(fontinfo.max_width * fontinfo.max_height);
         
         /* 
         Not sure why, but we do not need this line
         int w = face->glyph->bitmap.width / 3 * 3; */
-       
+        printf("gindex %c left %d\n", gindex, face->glyph->bitmap_left);
+      
         int dw = fontinfo.max_width;
-        int dx = fontinfo.baseline_x + face->glyph->bitmap_left;
+        int dx = fontinfo.baseline_x + face->glyph->bitmap_left * 3;
         int dy = fontinfo.baseline_y - face->glyph->bitmap_top;
         
-        dx = (dx + 1) / 3 * 3;
+        // dx = (dx + 1) / 3 * 3;
 
         /* Some combining diacritics seem to exceed the bounding box.
          * We don't support them all that well anyway, so just move
