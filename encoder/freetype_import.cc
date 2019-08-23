@@ -106,7 +106,7 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
     fontinfo.max_width = topx((face->bbox.xMax - face->bbox.xMin)) * 3 + 24;
     // we reserve 8 pixels on both side for SPR
     fontinfo.max_height = topx(face->bbox.yMax - face->bbox.yMin) + 16;
-    // baseline_x is inverted
+    // baseline_x is inverted. Not sure why we need to shift it to 2 px
     fontinfo.baseline_x = topx(-face->bbox.xMin) * 3 + 12 + 2;
     fontinfo.baseline_y = topx(face->bbox.yMax) + 8;
     fontinfo.line_height = topx(face->height);

@@ -199,6 +199,7 @@ static bool line_callback(const char *line, uint16_t count, void *state)
                           character_callback, state);
     }
     s->y += s->font->line_height;
+
     return true;
 }
 
@@ -240,12 +241,14 @@ int main(int argc, const char **argv)
     }
     
     /* Count the number of lines that we need. */
-    height = 0;
+    height = 1;
     mf_wordwrap(font, (options.width - 2 * options.margin) * 3,
                 options.text, count_lines, &height);
-    height *= font->height;
+
+    height *= font->line_height;
     height += 4;
     
+
     /* Allocate and clear the image buffer */
     state.options = &options;
     state.width = options.width;
