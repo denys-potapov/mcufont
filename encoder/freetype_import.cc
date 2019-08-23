@@ -154,7 +154,6 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         /* 
         Not sure why, but we do not need this line
         int w = face->glyph->bitmap.width / 3 * 3; */
-        printf("gindex %c left %d\n", gindex, face->glyph->bitmap_left);
       
         int dw = fontinfo.max_width;
         int dx = fontinfo.baseline_x + face->glyph->bitmap_left * 3;
@@ -165,12 +164,16 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         /* Some combining diacritics seem to exceed the bounding box.
          * We don't support them all that well anyway, so just move
          * them inside the box in order not to crash.. */
-        if (dy < 0)
+        if (dy < 0) {
             dy = 0;
-        if (dy + face->glyph->bitmap.rows > fontinfo.max_height)
+            printf("char %c %d dy underflow\n", gindex, gindex);
+        }
+        if (dy + face->glyph->bitmap.rows > fontinfo.max_height) {
             dy = fontinfo.max_height - face->glyph->bitmap.rows;
+            printf("char %c %d dy overflow\n", gindex, gindex);
+        }
 
-        int start_y = fontinfo.baseline_y % 2;
+        int start_y = face->glyph->bitmap_top % 2;
 
         size_t s = face->glyph->bitmap.pitch;
         for (int y = start_y; y < face->glyph->bitmap.rows; y+=2)
@@ -202,11 +205,14 @@ std::unique_ptr<DataFile> LoadFreetype(std::istream &file, int size, bool bw)
         /* Some combining diacritics seem to exceed the bounding box.
          * We don't support them all that well anyway, so just move
          * them inside the box in order not to crash.. */
-        if (dy < 0)
+        if (dy < 0) {
             dy = 0;
-        if (dy + face->glyph->bitmap.rows > fontinfo.max_height)
+            printf("char %c %d dy underflow 2\n", gindex, gindex);
+        }
+        if (dy + face->glyph->bitmap.rows > fontinfo.max_height) {
             dy = fontinfo.max_height - face->glyph->bitmap.rows;
-
+            printf("char %c %d dy overflow 2\n", gindex, gindex);
+        }
         for (int y = 1 - start_y; y < face->glyph->bitmap.rows; y+=2)
         {
             for (int x = 0; x < face->glyph->bitmap.width; x++)
